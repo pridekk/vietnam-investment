@@ -83,7 +83,7 @@ async function createIndex() {
   }
 }
 
-// init().catch(console.dir)
-createIndex().catch(console.dir)
+init().catch(console.dir)
+// createIndex().catch(console.dir)
 // update().catch(console.dir)
 // find('KRX', '005930').catch(console.dir)
