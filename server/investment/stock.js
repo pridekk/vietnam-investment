@@ -1,23 +1,31 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URL || "mongodb://root:example@localhost:27017"
+const uri = process.env.MONGODB_URL || "mongodb://root:example@localhost:27018"
 
 const client = new MongoClient(uri)
 
 
 // 종목 데이터 추가 예제
-async function updateMarketData(xchange_code, code, market_data_list) {
+// embedded document에 unique 를 보장하기 위해 해당 데이터가 존재한다면 삭제 후 삽입
+export async function updateMarketData(exchange_code, code, market_data_list) {
   try {
     await client.connect()
     const database = client.db('investment')
     const stocks = database.collection('stocks')
 
-    const filter = { "code": "005930", "exchange_code": "KRX" }
+    const filter = { "code": code, "exchange_code": exchange_code }
 
+
+    const removeMarketData = {
+      $pull: {
+        'market_data.date': {
+          $lte: "202"
+        }
+      }
+    }
     const addMarketData = {
       $push: {
         'market_data': { $each: market_data_list }
-
       }
     }
     const result = await stocks.updateOne(filter, addMarketData, {upsert:true})

@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import docs from './stock_data.json' assert { type: "json"}
 
 const uri =
-  "mongodb://root:example@localhost:27017"
+  "mongodb://root:example@localhost:27018"
 
 const client = new MongoClient(uri)
 
@@ -68,6 +68,22 @@ async function find(exchange_code, code, startedAt, endAt) {
   }
 }
 
-init().catch(console.dir)
+// 종목 데이터 가져오기
+async function createIndex() {
+  try {
+    await client.connect()
+    const database = client.db('investment')
+    const stocks = database.collection('stocks')
+
+    await stocks.createIndex( { "exchange_code":1, "code": 1, "market_data.date": -1}, {unique: true})
+
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close()
+  }
+}
+
+// init().catch(console.dir)
+createIndex().catch(console.dir)
 // update().catch(console.dir)
 // find('KRX', '005930').catch(console.dir)

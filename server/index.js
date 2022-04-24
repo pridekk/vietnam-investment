@@ -1,8 +1,8 @@
 import express from "express";
 import {checkSchema, oneOf, validationResult, query, body} from 'express-validator'
 import moment from "moment";
-import { getMarketData }from "./investment/stock.js"
-
+import { getMarketData, updateMarketData }from "./investment/stock.js"
+import "express-async-errors";
 
 const errorChecker = ( req, res, next) => {
   const errors = validationResult(req)
@@ -14,16 +14,18 @@ const errorChecker = ( req, res, next) => {
       errors: errors.array()
     })
   }
-  next()
+  return next()
 }
-
 const logger = (req, res, next) => {
   console.log(`Time: ${Date.now()}: ${req.url}`)
-  next()
+  return next()
 }
-const app = express();
 
+const app = express();
+app.use(express.json());
 app.use(logger)
+app.use(errorChecker)
+
 
 // 종목 일별 가격 제공
 app.get("/investment/stocks/:exchangeCode/:code",
@@ -52,9 +54,12 @@ app.post("/investment/stocks/:exchangeCode/:code",
     body('*.high').isNumeric(),
     body('*.low').isNumeric(),
   ],
+  errorChecker,
   async (req,res) => {
+    let params = req.params
 
-    res.send('ok')
+    await updateMarketData(params.exchangeCode, params.code, req.body)
+    res.json("updated")
   }
 
 
