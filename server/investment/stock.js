@@ -7,7 +7,7 @@ const client = new MongoClient(uri)
 
 // 종목 주가 데이터 추가 예제
 // embedded document에 unique 를 보장하기 위해 해당 데이터가 존재한다면 삭제 후 삽입
-export const updateMarketDataasync = (exchange_code, code, market_data_list) => {
+export const updateMarketData = async (exchange_code, code, market_data_list) => {
   try {
     await client.connect()
     const database = client.db('investment')

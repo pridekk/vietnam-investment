@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   haproxy:
-    image: pridekk/haproxy:0.1
+    image: haproxy:2.5.5
     volumes:
     - ./load_balancer/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
@@ -39,5 +39,17 @@ services:
       MONGODB_URL: mongodb://root:example@mongo:27017/
     ports:
       - "8082:3001"
+
+  redis:
+    image: redis:6.2.6
+    ports:
+      - "6379:6379"
+
+  redis-commander:
+    image: rediscommander/redis-commander
+    ports:
+      - "8099:8081"
+    environment:
+      REDIS_HOSTS: redis:redis:6379
 networks:
   default:
