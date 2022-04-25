@@ -37,9 +37,12 @@ services:
     entrypoint: [ "npm", "start" ]
     environment:
       MONGODB_URL: mongodb://root:example@mongo:27017/
-    ports:
-      - "8082:3001"
-
+      REDIS_URL: "redis://redis:6379"
+    # ports: # replica 모드에서는 주석처리해야함
+    #   - "8082:3001"
+    deploy:
+      mode: replicated
+      replicas: 2 
   redis:
     image: redis:6.2.6
     ports:
