@@ -1,4 +1,4 @@
-## 투자 정보 API 개발 :grinning: :+1"
+## 투자 정보 API 개발 :grinning: :+1:
 
 ## 서비스 구조
 <img src="./architecture.png"/>
