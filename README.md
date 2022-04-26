@@ -46,6 +46,24 @@ collection: stocks 내부에 종목별로 아래와 같은 구조로 기본 저�
 
 캐시 및 백엔드 서버 동적 부하분산을 위해 최신 버전의 Haproxy image 적용
 
+벡엔드 수량 변경에 대해 동적으로 부하분산 처리를 위해 dns, server-template 설정 
+
+```bash
+resolvers docker
+  nameserver dns1 127.0.0.11:53
+
+backend investment_server
+  mode http
+  balance roundrobin
+  option httpchk HEAD /
+  http-check expect status 200
+  http-request cache-use api_cache
+  http-response cache-store api_cache
+  http-response set-header X-Cache-Status HIT if !{ srv_id -m found }
+  http-response set-header X-Cache-Status MISS if { srv_id -m found }
+  server-template investment- 4 investment:3001 check resolvers docker init-addr none
+```
+
 * 서비스 
     * 포트: 80
     * node 서버 라운드로빈 부하분산 및 http get cache 처리 
