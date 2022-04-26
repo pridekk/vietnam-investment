@@ -62,6 +62,8 @@ backend investment_server
   http-response set-header X-Cache-Status HIT if !{ srv_id -m found }
   http-response set-header X-Cache-Status MISS if { srv_id -m found }
   server-template investment- 4 investment:3001 check resolvers docker init-addr none
+
+  # investment- 로 시작하는 서버 최대 4까지 라운드 로빈, 서버 수량을 4대 이상 늘릴 경우 수량 조정 필요
 ```
 
 * 서비스 
